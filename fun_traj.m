@@ -20,22 +20,22 @@ angular_inertia = 2.6e-3;
 
 % Trajectory generator options
 d = 4;
-options = {'ndim',d ,'order',9, 'minderiv',[4,4,4,3], 'constraints_per_seg', 20, 'convergetol', 1e-8};
+options = {'ndim',d ,'order',9, 'minderiv',[4,4,4,3], 'constraints_per_seg', 20, 'convergetol', 1e-9};
 
 %% Moving around in a helix
 
 close all
 clear waypoints bounds
 
-z_start = 1.2;
-z_end = 2.2;
+z_start = 0.5;
+z_end = 1.5;
 r_start = 1.5;
-r_end = 0.5;
+r_end = 0.75;
 t_start = 5;
 t_end_transition = 3;
 wo = 1;
-w_end = 4.5;
-t_duration = 12;
+w_end = 3.75;
+t_duration = 30;
 segments = 30;
 start_transition_segments = 1;
 end_transition_segments = 5;
@@ -100,12 +100,70 @@ for total_t = t_start:dt:t_end
         0; nan];
 end
 
+% pos = waypoints(end).pos;
+% size(waypoints)
+
+%% 
+% % Just keep going in a circle
+% t_start_circ = total_t + dt;
+% t_end = t_start_circ + 2;
+% 
+% z = pos(3);
+% yaw_start = pos(4) - w_end * dt;
+% for total_t = t_start_circ:dt:t_end
+%     
+%     waypoints(end+1) = NanWaypoint(total_t, d); %#ok<SAGROW>
+%     
+%     t = total_t - t_start_circ;
+%     
+%     wo = w_end;
+%     r = r_end;
+%     wdot = 0;
+%     rdot = 0;
+%     
+%     yaw = yaw_start - wo * t;
+%     yaw_dot = - w_end;
+%     yaw_ddot = 0;
+%     
+%     pos_yaw = -yaw;
+%     
+%     waypoints(end).pos = [...
+%         r * cos(pos_yaw);...
+%         r * sin(pos_yaw);...
+%         z;...
+%         yaw]; % This isn't correct
+%  
+%     waypoints(end).vel = [...
+%         -wo*r*sin(pos_yaw);...
+%         wo*cos(pos_yaw)*r;...
+%         0;...
+%         yaw_dot];
+%     
+%     waypoints(end).acc = [...
+%         -wo.^2*cos(pos_yaw)*r;...
+%         -wo.^2*r*sin(pos_yaw);...
+%          0; 0];
+%     
+%     waypoints(end).jerk = [...
+%         wo.^3*r*sin(pos_yaw);...
+%         -wo.^3*cos(pos_yaw)*r;...
+%         0; nan];
+%     
+%     waypoints(end).snap = [...
+%         wo.^4*cos(pos_yaw)*r;...
+%         wo.^4*r*sin(pos_yaw);...
+%         0; nan];
+%     
+% end
+% 
+% size(waypoints)
+
 for idx = 1:end_transition_segments-1
     waypoints(end+1) = NanWaypoint(waypoints(end).time + t_end_transition/end_transition_segments, d); %#ok<SAGROW>
 end
 
 waypoints(end+1) = ZeroWaypoint(waypoints(end).time + t_end_transition/end_transition_segments, d);
-waypoints(end).pos = [waypoints(1).pos(1:3)', yaw+yaw_dot*t_end_transition/2];
+waypoints(end).pos = [waypoints(1).pos(1:3)', nan]';
 
 bounds = [];
 % bounds(1) = SetBound([], 'pos', 'lb', [nan, nan, -10, nan]);
@@ -126,28 +184,28 @@ t = waypoints(end).time;
 
 t = t+1.5;
 waypoints(end+1) = NanWaypoint(t,d);
-waypoints(end).pos = [1, 1, pos(3:4)];
-waypoints(end).vel = [1, 0, 0, 0];
+waypoints(end).pos = [1; 1; pos(3:4)];
+waypoints(end).vel = [1; 0; 0; 0];
 
 t = t+1.5;
 waypoints(end+1) = NanWaypoint(t,d);
-waypoints(end).pos = [1, -1, pos(3:4)];
-waypoints(end).vel = [-1, 0, 0, 0];
+waypoints(end).pos = [1; -1; pos(3:4)];
+waypoints(end).vel = [-1; 0; 0; 0];
 
 t = t+2;
 waypoints(end+1) = NanWaypoint(t,d);
-waypoints(end).pos = [-1, 1, pos(3:4)];
-waypoints(end).vel = [-1, 0, 0, 0];
+waypoints(end).pos = [-1; 1; pos(3:4)];
+waypoints(end).vel = [-1; 0; 0; 0];
 
 t = t+1.5;
 waypoints(end+1) = NanWaypoint(t,d);
-waypoints(end).pos = [-1, -1, pos(3:4)];
-waypoints(end).vel = [1, 0, 0, 0];
+waypoints(end).pos = [-1; -1; pos(3:4)];
+waypoints(end).vel = [1; 0; 0; 0];
 
 t = t+1.5;
 waypoints(end+1) = ZeroWaypoint(t,d);
 waypoints(end).pos = pos;
-waypoints(end).vel = nan(1,4);
+waypoints(end).vel = nan(4,1);
 
 %% Fake Falling
 

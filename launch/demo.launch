@@ -1,18 +1,18 @@
 <launch>
   
   <arg name="model" value="QuadrotorGolf"/>
+  <arg name="sim" value="0"/>
 
   <!-- Launch vicon odometry node -->
   <arg name="vicon_fps" value="100"/>
-  <include file="$(find vicon)/launch/vicon.launch" />
-  <include file="$(find vicon_odom)/launch/ViconOdom.launch">
+  <include file="$(find vicon)/launch/vicon.launch" unless="$(arg sim)"/>
+  <include file="$(find vicon_odom)/launch/ViconOdom.launch" unless="$(arg sim)">
     <arg name="model" value="$(arg model)" />
     <arg name="vicon_fps" value="$(arg vicon_fps)"/>
   </include>
 
   <group ns="QuadrotorGolf">
 
-    <arg name="sim" value="0"/>
     <arg name="mass" value="0.5"/>
     <param name="mass" value="$(arg mass)"/> 
 
@@ -111,7 +111,6 @@
       output="screen">
       <param name="startup_sleep_duration" value="0.25"/>
       <param name="traj_filename" value="/home/justin/git/hummingbird_demo/traj.csv"/>
-      <remap from="output_data" to="quad_decode_msg/output_data"/>
     </node>
 
   </group>

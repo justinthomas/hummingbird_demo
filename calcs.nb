@@ -10,10 +10,10 @@
 NotebookFileLineBreakTest
 NotebookFileLineBreakTest
 NotebookDataPosition[       158,          7]
-NotebookDataLength[     24510,        746]
-NotebookOptionsPosition[     23776,        718]
-NotebookOutlinePosition[     24132,        734]
-CellTagsIndexPosition[     24089,        731]
+NotebookDataLength[     32106,        986]
+NotebookOptionsPosition[     30858,        943]
+NotebookOutlinePosition[     31212,        959]
+CellTagsIndexPosition[     31169,        956]
 WindowFrame->Normal*)
 
 (* Beginning of Notebook Content *)
@@ -714,10 +714,235 @@ Cell[BoxData[
  CellChangeTimes->{3.64226386137742*^9, 3.642265244052064*^9, 
   3.642265815676173*^9, 3.6422661377675953`*^9, 3.64232821480567*^9, 
   3.642328983640287*^9, 3.642329310860401*^9}]
+}, Open  ]],
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"angle", " ", "=", " ", 
+   RowBox[{"yaw", "[", "t", "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"pos", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"r", "*", 
+      RowBox[{"Cos", "[", "angle", "]"}]}], ",", 
+     RowBox[{"r", "*", 
+      RowBox[{"Sin", "[", "angle", "]"}]}]}], "}"}]}], 
+  ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"vel", "=", 
+   RowBox[{"D", "[", 
+    RowBox[{"pos", ",", "t"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"acc", "=", 
+   RowBox[{"D", "[", 
+    RowBox[{"vel", ",", "t"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"jrk", "=", 
+   RowBox[{"D", "[", 
+    RowBox[{"acc", ",", "t"}], "]"}]}], ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"snp", "=", 
+   RowBox[{"D", "[", 
+    RowBox[{"jrk", ",", "t"}], "]"}]}], ";"}]}], "Input",
+ CellChangeTimes->{
+  3.642616141960676*^9, {3.642617477063835*^9, 3.642617478225894*^9}, {
+   3.6426175089029083`*^9, 3.642617509332817*^9}, {3.642618075162985*^9, 
+   3.642618076395261*^9}, {3.642618133105308*^9, 3.6426181358982067`*^9}}],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"subs", "=", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{
+      RowBox[{
+       RowBox[{"r", "'"}], "[", "t", "]"}], "\[Rule]", "0"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"r", "''"}], "[", "t", "]"}], "\[Rule]", "0"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"r", "'''"}], "[", "t", "]"}], "\[Rule]", "0"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"r", "''''"}], "[", "t", "]"}], "\[Rule]", "0"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"yaw", "''"}], "[", "t", "]"}], "\[Rule]", "0"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"yaw", "'''"}], "[", "t", "]"}], "\[Rule]", "0"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"yaw", "''''"}], "[", "t", "]"}], "\[Rule]", "0"}], ",", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"yaw", "'''''"}], "[", "t", "]"}], "\[Rule]", "0"}]}], "}"}]}],
+   ";"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"FullSimplify", "[", 
+   RowBox[{
+    RowBox[{"vel", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "/.",
+     "subs"}], "]"}], "//", "MatrixForm"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"FullSimplify", "[", 
+   RowBox[{
+    RowBox[{"acc", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "/.",
+     "subs"}], "]"}], "//", "MatrixForm"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"FullSimplify", "[", 
+   RowBox[{
+    RowBox[{"jrk", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "/.",
+     "subs"}], "]"}], "//", "MatrixForm"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"FullSimplify", "[", 
+   RowBox[{
+    RowBox[{"snp", "\[LeftDoubleBracket]", "1", "\[RightDoubleBracket]"}], "/.",
+     "subs"}], "]"}], "//", "MatrixForm"}]}], "Input",
+ CellChangeTimes->{{3.64261617155267*^9, 3.642616179846416*^9}, {
+  3.642618098348803*^9, 3.642618112841549*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{
+   RowBox[{"-", "r"}], " ", 
+   RowBox[{"Sin", "[", 
+    RowBox[{"yaw", "[", "t", "]"}], "]"}], " ", 
+   RowBox[{
+    SuperscriptBox["yaw", "\[Prime]",
+     MultilineFunction->None], "[", "t", "]"}]}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{{3.6426161808909197`*^9, 3.6426161846223507`*^9}, {
+  3.642618117130146*^9, 3.6426181383366823`*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{
+   RowBox[{"-", "r"}], " ", 
+   RowBox[{"Cos", "[", 
+    RowBox[{"yaw", "[", "t", "]"}], "]"}], " ", 
+   SuperscriptBox[
+    RowBox[{
+     SuperscriptBox["yaw", "\[Prime]",
+      MultilineFunction->None], "[", "t", "]"}], "2"]}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{{3.6426161808909197`*^9, 3.6426161846223507`*^9}, {
+  3.642618117130146*^9, 3.642618138347563*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"r", " ", 
+   RowBox[{"Sin", "[", 
+    RowBox[{"yaw", "[", "t", "]"}], "]"}], " ", 
+   SuperscriptBox[
+    RowBox[{
+     SuperscriptBox["yaw", "\[Prime]",
+      MultilineFunction->None], "[", "t", "]"}], "3"]}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{{3.6426161808909197`*^9, 3.6426161846223507`*^9}, {
+  3.642618117130146*^9, 3.642618138354949*^9}}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"r", " ", 
+   RowBox[{"Cos", "[", 
+    RowBox[{"yaw", "[", "t", "]"}], "]"}], " ", 
+   SuperscriptBox[
+    RowBox[{
+     SuperscriptBox["yaw", "\[Prime]",
+      MultilineFunction->None], "[", "t", "]"}], "4"]}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{{3.6426161808909197`*^9, 3.6426161846223507`*^9}, {
+  3.642618117130146*^9, 3.6426181383623447`*^9}}]
+}, Open  ]],
+
+Cell[CellGroupData[{
+
+Cell[BoxData[{
+ RowBox[{
+  RowBox[{"FullSimplify", "[", 
+   RowBox[{
+    RowBox[{"vel", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], "/.",
+     "subs"}], "]"}], "//", "MatrixForm"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"FullSimplify", "[", 
+   RowBox[{
+    RowBox[{"acc", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], "/.",
+     "subs"}], "]"}], "//", "MatrixForm"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"FullSimplify", "[", 
+   RowBox[{
+    RowBox[{"jrk", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], "/.",
+     "subs"}], "]"}], "//", "MatrixForm"}], "\[IndentingNewLine]", 
+ RowBox[{
+  RowBox[{"FullSimplify", "[", 
+   RowBox[{
+    RowBox[{"snp", "\[LeftDoubleBracket]", "2", "\[RightDoubleBracket]"}], "/.",
+     "subs"}], "]"}], "//", "MatrixForm"}]}], "Input"],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"r", " ", 
+   RowBox[{"Cos", "[", 
+    RowBox[{"yaw", "[", "t", "]"}], "]"}], " ", 
+   RowBox[{
+    SuperscriptBox["yaw", "\[Prime]",
+     MultilineFunction->None], "[", "t", "]"}]}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{3.6426162035147257`*^9, 3.6426181419665403`*^9}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{
+   RowBox[{"-", "r"}], " ", 
+   RowBox[{"Sin", "[", 
+    RowBox[{"yaw", "[", "t", "]"}], "]"}], " ", 
+   SuperscriptBox[
+    RowBox[{
+     SuperscriptBox["yaw", "\[Prime]",
+      MultilineFunction->None], "[", "t", "]"}], "2"]}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{3.6426162035147257`*^9, 3.64261814197362*^9}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{
+   RowBox[{"-", "r"}], " ", 
+   RowBox[{"Cos", "[", 
+    RowBox[{"yaw", "[", "t", "]"}], "]"}], " ", 
+   SuperscriptBox[
+    RowBox[{
+     SuperscriptBox["yaw", "\[Prime]",
+      MultilineFunction->None], "[", "t", "]"}], "3"]}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{3.6426162035147257`*^9, 3.642618141977668*^9}],
+
+Cell[BoxData[
+ TagBox[
+  RowBox[{"r", " ", 
+   RowBox[{"Sin", "[", 
+    RowBox[{"yaw", "[", "t", "]"}], "]"}], " ", 
+   SuperscriptBox[
+    RowBox[{
+     SuperscriptBox["yaw", "\[Prime]",
+      MultilineFunction->None], "[", "t", "]"}], "4"]}],
+  Function[BoxForm`e$, 
+   MatrixForm[BoxForm`e$]]]], "Output",
+ CellChangeTimes->{3.6426162035147257`*^9, 3.642618141981889*^9}]
 }, Open  ]]
 },
 WindowSize->{1380, 855},
-WindowMargins->{{0, Automatic}, {Automatic, 899}},
+WindowMargins->{{0, Automatic}, {Automatic, 0}},
 FrontEndVersion->"10.1 for Mac OS X x86 (32-bit, 64-bit Kernel) (March 23, \
 2015)",
 StyleDefinitions->"Default.nb"
@@ -736,17 +961,32 @@ Notebook[{
 Cell[558, 20, 1307, 39, 114, "Input"],
 Cell[CellGroupData[{
 Cell[1890, 63, 1905, 50, 97, "Input"],
-Cell[3798, 115, 1473, 41, 58, "Output"],
-Cell[5274, 158, 2007, 59, 58, "Output"],
-Cell[7284, 219, 2552, 76, 58, "Output"],
-Cell[9839, 297, 3837, 108, 95, "Output"]
+Cell[3798, 115, 1473, 41, 47, "Output"],
+Cell[5274, 158, 2007, 59, 47, "Output"],
+Cell[7284, 219, 2552, 76, 47, "Output"],
+Cell[9839, 297, 3837, 108, 84, "Output"]
 }, Open  ]],
 Cell[CellGroupData[{
 Cell[13713, 410, 881, 21, 80, "Input"],
-Cell[14597, 433, 1293, 39, 58, "Output"],
-Cell[15893, 474, 1814, 56, 58, "Output"],
-Cell[17710, 532, 2370, 74, 58, "Output"],
-Cell[20083, 608, 3677, 107, 129, "Output"]
+Cell[14597, 433, 1293, 39, 47, "Output"],
+Cell[15893, 474, 1814, 56, 47, "Output"],
+Cell[17710, 532, 2370, 74, 47, "Output"],
+Cell[20083, 608, 3677, 107, 84, "Output"]
+}, Open  ]],
+Cell[23775, 718, 1109, 32, 114, "Input"],
+Cell[CellGroupData[{
+Cell[24909, 754, 1830, 51, 97, "Input"],
+Cell[26742, 807, 420, 12, 75, "Output"],
+Cell[27165, 821, 446, 13, 43, "Output"],
+Cell[27614, 836, 427, 12, 43, "Output"],
+Cell[28044, 850, 429, 12, 43, "Output"]
+}, Open  ]],
+Cell[CellGroupData[{
+Cell[28510, 867, 813, 20, 80, "Input"],
+Cell[29326, 889, 348, 10, 41, "Output"],
+Cell[29677, 901, 392, 12, 43, "Output"],
+Cell[30072, 915, 393, 12, 43, "Output"],
+Cell[30468, 929, 374, 11, 43, "Output"]
 }, Open  ]]
 }
 ]
