@@ -88,7 +88,10 @@ class MAV_Services
   }
   bool useRadioForVelocity_cb(mav_manager::Bool::Request &req, mav_manager::Bool::Response &res)
   {
-    res.success = mav_.useRadioForVelocity(req.b);
+    // TODO: Use setDesVel instead
+    //
+    // res.success = mav_.useRadioForVelocity(req.b);
+    res.success = false;
     if (res.success)
     {
       if (req.b)
