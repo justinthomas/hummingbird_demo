@@ -11,7 +11,7 @@
     <arg name="vicon_fps" value="$(arg vicon_fps)"/>
   </include>
 
-  <group ns="QuadrotorGolf">
+  <group ns="$(arg model)">
 
     <arg name="mass" value="0.5"/>
     <param name="mass" value="$(arg mass)"/> 
