@@ -48,7 +48,7 @@ class MAV_Services
 
   bool motors_cb(mav_manager::Bool::Request &req, mav_manager::Bool::Response &res)
   {
-    mav_.motors(req.b);
+    mav_.set_motors(req.b);
     res.success = true;
     res.message = "Motors activated";
     return true;
