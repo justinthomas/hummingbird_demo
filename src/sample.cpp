@@ -104,20 +104,13 @@ class MAV_Services
 
     return res.success;
   }
-  bool useNullTracker_cb(mav_manager::Trigger::Request &req, mav_manager::Trigger::Response &res)
+  bool prepTraj_cb(mav_manager::Vec4::Request &req, mav_manager::Vec4::Response &res)
   {
-    res.success = mav_.useNullTracker();
-    if (res.success)
-      res.message = "Using NullTracker";
-    else
-      res.message = "Failed to transition to NullTracker";
-
-    return res.success;
-  }
-  bool prepTraj_cb(mav_manager::Trigger::Request &req, mav_manager::Trigger::Response &res)
-  {
-    if (traj.isLoaded())
+    // Read the file
+    if (traj.LoadTrajectory())
     {
+      traj.setOffsets(req.goal[0], req.goal[1], req.goal[2], mav_.yaw());
+      ROS_INFO("Trajectory Offsets set to %2.3f, %2.3f, %2.3f, %2.3f", req.goal[0], req.goal[1], req.goal[2], mav_.yaw());
       traj.set_start_time();
       quadrotor_msgs::PositionCommand goal;
       traj.UpdateGoal(goal);
@@ -215,21 +208,16 @@ class MAV_Services
   // Constructor
   MAV_Services() : traj_active_(false), nh_(""), nh_priv_("~") {
 
+    mav_.set_need_imu(false);
+
     // The trajectory filename
     std::string traj_filename;
     nh_priv_.param("traj_filename", traj_filename, std::string("traj.csv"));
+    ROS_INFO("Using traj: %s", traj_filename.c_str());
     traj.set_filename(traj_filename);
-
-    if (traj.LoadTrajectory())
-      ROS_INFO("Trajectory loaded");
-    else
-      ROS_WARN("Trajectory could not be loaded.");
 
     // Subscribers
     odom_sub_ = nh_.subscribe("odom", 1, &MAV_Services::odometry_cb, this);
-
-    // Publishers
-    // pub_position_cmd_ = n.advertise<quadrotor_msgs::PositionCommand>("position_cmd", 1);
 
     // Services
     srv_motors_ = nh_.advertiseService("motors", &MAV_Services::motors_cb, this);

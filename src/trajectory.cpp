@@ -128,6 +128,7 @@ bool Trajectory::LoadTrajectory()
   if (!file.good())
   {
     error_code_ = 1;
+    loaded = false;
     return false;
   }
 
@@ -142,6 +143,7 @@ bool Trajectory::LoadTrajectory()
     if (iss.fail())
     {
       error_code_ = 2;
+      loaded = false;
       return false;
     }
 
@@ -175,6 +177,7 @@ bool Trajectory::LoadTrajectory()
     {
       cout << "Error reading line " << dim0+1 << endl;
       error_code_ = 3;
+      loaded = false;
       return false;
     }
 
@@ -191,6 +194,7 @@ bool Trajectory::LoadTrajectory()
         if (iss.fail())
         {
           error_code_ = 4;
+          loaded = false;
           return false;
         }
 
@@ -207,6 +211,7 @@ bool Trajectory::LoadTrajectory()
       if (iss.fail())
       {
         error_code_ = 5;
+        loaded = false;
         return false;
       }
 
