@@ -23,46 +23,34 @@ class DemoServices : public MAVManagerServices
 
     bool traj_active_;
 
-    bool useRadioForVelocity_cb(mav_manager::Trigger::Request &req, mav_manager::Trigger::Response &res)
+    bool useRadioSimulator_cb(mav_manager::Trigger::Request &req, mav_manager::Trigger::Response &res)
     {
-      if (useRadioForVelocity_ == false)
+      const std::string tracker_str("std_trackers/RadioTrackerSimulator");
+      res.success = mav->transition(tracker_str);
+      res.message = "Transition to " + tracker_str;
+      if (res.success)
       {
-        if (mav->have_recent_output_data())
-        {
-          res.success = setVelFromRadio();
-          if (res.success)
-          {
-            useRadioForVelocity_ = true;
-            res.message = "Using radio for velocity";
-            last_cb_ = "useRadioForVelocity";
-          }
-          else
-          {
-            res.message = "Couldn't set velocity using the radio.";
-            ROS_WARN("%s", res.message.c_str());
-          }
-        }
-        else
-        {
-          res.success = false;
-          res.message = "No recent radio data. Not using radio for velocity control.";
-          ROS_WARN("%s", res.message.c_str());
-        }
+        res.message += " succeeded.";
+        last_cb_ = "useRadioSimulator";
       }
       else
+        res.message += " failed";
+
+      return true;
+    }
+    bool useRadioForVelocity_cb(mav_manager::Trigger::Request &req, mav_manager::Trigger::Response &res)
+    {
+      const std::string tracker_str("std_trackers/RadioTrackerVelocity");
+      res.success = mav->transition(tracker_str);
+      res.message = "Transition to " + tracker_str;
+      if (res.success)
       {
-        res.success = mav->hover();
-        if (res.success)
-        {
-          useRadioForVelocity_ = false;
-          res.message = "No longer using radio for velocity.";
-        }
-        else
-        {
-          res.message = "Could not hover. Still using radio for velocity.";
-          ROS_WARN("%s", res.message.c_str());
-        }
+        res.message += " succeeded";
+        last_cb_ = "useRadioForVelocity";
       }
+      else
+        res.message += " failed";
+
       return true;
     }
     bool prepTraj_cb(mav_manager::Vec4::Request &req, mav_manager::Vec4::Response &res)
@@ -154,33 +142,6 @@ class DemoServices : public MAVManagerServices
     void odometry_cb(const nav_msgs::Odometry::ConstPtr &msg);
 
     std::map<std::string, uint8_t> services_map;
-
-    bool setVelFromRadio()
-    {
-      auto radio = mav->radio();
-
-      // constants
-      float scale = 255.0 / 2.0;
-      float rc_max_v = 1.0;
-      float rc_max_w = 90.0 * M_PI / 180.0;
-
-      // scale radio
-      float vel[4] = {0, 0, 0, 0};
-      vel[0] = - ((float)radio[0] - scale) / scale * rc_max_v;
-      vel[1] = - ((float)radio[1] - scale) / scale * rc_max_v;
-
-      // Only consider z velocity if the FLT Mode switch is toggled
-      if (radio[5] > 0)
-        vel[2] = ((float)radio[2] - scale) / scale * rc_max_v;
-
-      vel[3] = - ((float)radio[3] - scale) / scale * rc_max_w;
-
-      // Deadbands on velocity
-      float db[4] = {0.1, 0.1, 0.15, 0.03};
-      for (unsigned int i = 0; i < 4; i++) vel[i] = deadband(vel[i], db[i]);
-
-      return mav->setDesVelInWorldFrame(vel[0], vel[1], vel[2], vel[3]);
-    }
 };
 
 void DemoServices::odometry_cb(const nav_msgs::Odometry::ConstPtr &msg)
@@ -203,20 +164,11 @@ void DemoServices::odometry_cb(const nav_msgs::Odometry::ConstPtr &msg)
     else
       traj_active_ = false;
   }
-
-  if (useRadioForVelocity_)
-  {
-    if (last_cb_ == "useRadioForVelocity" && mav->active_tracker() == "std_trackers/VelocityTracker")
-      setVelFromRadio();
-    else
-      useRadioForVelocity_ = false;
-  }
 };
 
 DemoServices::DemoServices(std::shared_ptr<MAVManager> m) :
   MAVManagerServices(m),
   traj_active_(false),
-  useRadioForVelocity_(false)
 {
   // The trajectory filename
   std::string traj_filename;
