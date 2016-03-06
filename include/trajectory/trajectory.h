@@ -29,5 +29,6 @@ class Trajectory
     int  get_error_code() {return error_code_;}
     bool isLoaded() {return loaded;}
     bool isCompleted() {return completed;}
+    void resetFlags() {loaded = false; completed = false;}
     std::string get_filename() {return filename_;}
 };

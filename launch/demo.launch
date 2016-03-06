@@ -1,8 +1,9 @@
 <launch>
   
-  <arg name="model" default="QuadrotorPapa"/>
-  <arg name="sim" value="1"/>
-  <arg name="config_path" default="/Users/justin/Dropbox/Work/01-Penn/papers_and_posters/Suction_Cup_Gripper/20150910/config"/>
+  <arg name="model" default="QuadrotorFoxtrot"/>
+  <arg name="sim" default="1"/>
+  <arg name="config_path" default="$(find hummingbird_demo)"/>
+  <arg name="mass" value="0.5"/>
 
   <!-- Launch vicon odometry node -->
   <arg name="vicon_fps" value="100"/>
@@ -14,7 +15,6 @@
 
   <group ns="$(arg model)">
 
-    <arg name="mass" value="0.72"/>
     <param name="mass" value="$(arg mass)"/> 
 
     <rosparam file="$(find mav_manager)/config/params.yaml"/>
