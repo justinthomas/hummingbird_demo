@@ -14,6 +14,7 @@ class Trajectory
     traj_type traj_;
     bool completed, loaded;
     double xoff, yoff, zoff, yaw_off;
+    // float kR_[3], kOm_[3];
 
   public:
     Trajectory();

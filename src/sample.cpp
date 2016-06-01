@@ -89,7 +89,7 @@ class DemoServices : public MAVManagerServices
       }
       return true;
     }
-    bool executeTrajectory_cb(mav_manager::Trigger::Request &req, mav_manager::Trigger::Response &res)
+    bool executeTraj_cb(mav_manager::Trigger::Request &req, mav_manager::Trigger::Response &res)
     {
       // Make sure the trajectory is loaded
       if (!traj.isLoaded())
@@ -97,7 +97,7 @@ class DemoServices : public MAVManagerServices
         res.success = false;
         res.message = "Trajectory not loaded. Cannot start trajectory.";
         ROS_WARN("%s", res.message.c_str());
-        return true;
+        return false;
       }
 
       // Check the velocity error
@@ -107,7 +107,7 @@ class DemoServices : public MAVManagerServices
         res.success = false;
         res.message = "Velocity too large to start trajectory";
         ROS_WARN("%s", res.message.c_str());
-        return true;
+        return false;
       }
 
       // Check the position error
@@ -123,7 +123,7 @@ class DemoServices : public MAVManagerServices
         res.success = false;
         res.message = "Position error too large to start trajectory";
         ROS_WARN("%s", res.message.c_str());
-        return true;
+        return false;
       }
 
       if(mav->setPositionCommand(goal))
@@ -132,7 +132,7 @@ class DemoServices : public MAVManagerServices
         traj_active_ = true;
         res.success = true;
         ROS_INFO("Executing trajectory...");
-        last_cb_ = "executeTrajectory";
+        last_cb_ = "executeTraj";
         return true;
       }
       else
@@ -140,7 +140,7 @@ class DemoServices : public MAVManagerServices
         res.success = false;
         res.message = "Could not transition to null tracker";
         ROS_WARN("Could not transition to null tracker");
-        return true;
+        return false; 
       }
 
       return false;
@@ -164,17 +164,35 @@ void DemoServices::odometry_cb(const nav_msgs::Odometry::ConstPtr &msg)
 
   if (traj_active_)
   {
-    if (last_cb_ == "executeTrajectory" && mav->active_tracker() == "std_trackers/NullTracker")
+    // There is a race condition here. active_tracker may not be correct?
+    // auto active_tracker = mav->active_tracker();
+    if (last_cb_ == "executeTraj") //&& active_tracker == "std_trackers/NullTracker")
     {
       quadrotor_msgs::PositionCommand goal;
       traj.UpdateGoal(goal);
       mav->setPositionCommand(goal);
 
+      // TODO: Here, check the projection of b3 desired to disable attitude gains. We might
+      // prefer to do this in matlab and just set the gains every time.
+      if (false && goal.acceleration.z <= -9.81 + 1.0)
+      {
+        quadrotor_msgs::AttitudeGains msg;
+        msg.kR[0]  = 0; msg.kR[1]  = 0; msg.kR[2]  = 0;
+        msg.kOm[0] = 0; msg.kOm[1] = 0; msg.kOm[2] = 0;
+        mav->setAttitudeGains(msg);
+        // Maybe do this directly with a publisher to so3_control
+        // mav->setAttitudeGains(
+        // Need to make sure the gains go back to their original value (or something soft)
+      }
+
       if (traj.isCompleted())
         traj_active_ = !(mav->hover());
     }
     else
+    {
+      ROS_INFO("Trajectory no longer active."); // active_tracker = %s", active_tracker.c_str());
       traj_active_ = false;
+    }
   }
 };
 
@@ -194,7 +212,7 @@ DemoServices::DemoServices(std::shared_ptr<MAVManager> m) :
   srvs_.push_back(nh_.advertiseService("useRadioForVelocity", &DemoServices::useRadioForVelocity_cb, this));
   srvs_.push_back(nh_.advertiseService("loadTraj", &DemoServices::loadTraj_cb, this));
   srvs_.push_back(nh_.advertiseService("prepTraj", &DemoServices::prepTraj_cb, this));
-  srvs_.push_back(nh_.advertiseService("executeTrajectory", &DemoServices::executeTrajectory_cb, this));
+  srvs_.push_back(nh_.advertiseService("executeTraj", &DemoServices::executeTraj_cb, this));
 }
 
 int main(int argc, char **argv)

@@ -40,3 +40,6 @@ catkin_package(
 
 add_executable(hummingbird_demo src/sample.cpp src/trajectory.cpp)
 target_link_libraries(hummingbird_demo mav_manager ${catkin_LIBRARIES})
+
+add_executable(multi_mav_services src/multi_mav_services.cpp)
+target_link_libraries(multi_mav_services ${catkin_LIBRARIES})

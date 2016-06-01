@@ -9,7 +9,7 @@ traj_kv = [2.4*ones(1,2), 3.0];
 
 % Givens
 g = 9.81;
-mass = 0.5;
+mass = 0.6;
 arm_length = 0.175;
 prop_r = 0.1;
 
@@ -22,30 +22,89 @@ angular_inertia = 2.6e-3;
 d = 4;
 options = {'ndim',d ,'order',9, 'minderiv',[4,4,4,3], 'constraints_per_seg', 20, 'convergetol', 1e-9};
 
-%% Moving around in a helix
-
 close all
 clear waypoints bounds
 
-z_start = 0.5;
-z_end = 1.5;
-r_start = 1.5;
-r_end = 0.75;
-t_start = 5;
-t_end_transition = 3;
-wo = 1;
-w_end = 3.75;
-t_duration = 30;
-segments = 30;
-start_transition_segments = 1;
-end_transition_segments = 5;
+%% Motion along primary axes
+
+z_start = 1.2;
+dt = 1.5;
 
 t = 0;
 waypoints(1) = ZeroWaypoint(t, d);
-waypoints(end).pos = [0; 0; z_start; 0];
+waypoints(end).pos = [1.5; 0; z_start; 0];
+
+% % Positive x
+% t = t + dt;
+% waypoints(end+1) = NanWaypoint(t, d);
+% waypoints(end).pos = [1; 0; z_start; 0];
+% 
+% % Negative x
+% t = t + 2*dt;
+% waypoints(end+1) = NanWaypoint(t, d);
+% waypoints(end).pos = [-1; 0; z_start; 0];
+% 
+% % Base
+% t = t + dt;
+% waypoints(end+1) = ZeroWaypoint(t, d);
+% waypoints(end).pos = [0; 0; z_start; 0];
+% 
+% % Positive y
+% t = t + dt;
+% waypoints(end+1) = NanWaypoint(t, d);
+% waypoints(end).pos = [0; 1; z_start; 0];
+% 
+% % Negative y
+% t = t + 1.8*dt;
+% waypoints(end+1) = NanWaypoint(t, d);
+% waypoints(end).pos = [0; -1; z_start; 0];
+% 
+% % Base
+% t = t + dt;
+% waypoints(end+1) = ZeroWaypoint(t, d);
+% waypoints(end).pos = [0; 0; z_start; 0];
+% 
+% % Positive z
+% t = t + 1.5*dt;
+% waypoints(end+1) = NanWaypoint(t, d);
+% waypoints(end).pos = [0; 0; min(3.5, z_start + 1); 0];
+% 
+% % Negative z to Base
+% t = t + 1.5*dt;
+% waypoints(end+1) = ZeroWaypoint(t, d);
+% waypoints(end).pos = [0; 0; z_start; 0];
+% 
+% % Positive yaw
+% t = t + 3*dt;
+% waypoints(end+1) = ZeroWaypoint(t, d);
+% waypoints(end).pos = [0; 0; z_start; 2*pi];
+% 
+% % Negative yaw
+% t = t + 3*dt;
+% waypoints(end+1) = ZeroWaypoint(t, d);
+% waypoints(end).pos = [0; 0; z_start; 0];
+
+%% Moving around in a helix
+
+z_end = 2.3;
+r_start = 1;
+r_end = 0.75;
+t_start_transition = 5;
+t_start = t + t_start_transition;
+t_end_transition = 3;
+wo = 1;
+w_end = 1.5;
+t_duration = 15;
+segments = 20;
+start_transition_segments = 1;
+end_transition_segments = 5;
+
+% t = 0;
+% waypoints(end+1) = ZeroWaypoint(t, d);
+% waypoints(end).pos = [0; 0; z_start; 0];
 
 for idx = 1:start_transition_segments-1
-    waypoints(end+1) = NanWaypoint(t_start/start_transition_segments, d); %#ok<SAGROW>
+    waypoints(end+1) = NanWaypoint(t + t_start_transition/start_transition_segments, d); %#ok<SAGROW>
     waypoints(end).pos(end) = 0;
 end
 
@@ -73,30 +132,30 @@ for total_t = t_start:dt:t_end
     yaw_ddot = - wdot;
 
     waypoints(end).pos = [...
-        r * cos(-yaw);...
         r * sin(-yaw);...
+        r * cos(-yaw);...
         z_start + t*zdot;...
         yaw]; % This isn't correct
  
     waypoints(end).vel = [...
-        cos(1/2*t*(2*wo+t*(wdot)))*(rdot)-r*sin(1/2*t*(2*wo+t*(wdot)))*(wo+t*(wdot));...
         sin(1/2*t*(2*wo+t*(wdot)))*(rdot)+cos(1/2*t*(2*wo+t*(wdot)))*r*(wo+t*(wdot));...
+        cos(1/2*t*(2*wo+t*(wdot)))*(rdot)-r*sin(1/2*t*(2*wo+t*(wdot)))*(wo+t*(wdot));...
         zdot;...
         yaw_dot];
     
     waypoints(end).acc = [...
-        -cos(1/2*t*(2*wo+t*(wdot)))*r*(wo+t*(wdot)).^2-sin(1/2*t*(2*wo+t*(wdot)))*(r*(wdot)+2*(rdot)*(wo+t*(wdot)));...
         -r*sin(1/2*t*(2*wo+t*(wdot)))*(wo+t*(wdot)).^2+cos(1/2*t*(2*wo+t*(wdot)))*(r*(wdot)+2*(rdot)*(wo+t*(wdot)));...
+         -cos(1/2*t*(2*wo+t*(wdot)))*r*(wo+t*(wdot)).^2-sin(1/2*t*(2*wo+t*(wdot)))*(r*(wdot)+2*(rdot)*(wo+t*(wdot)));...
         0; yaw_ddot];
     
     waypoints(end).jerk = [...
-        -3*cos(1/2*t*(2*wo+t*(wdot)))*(wo+t*(wdot))*(r*(wdot)+(rdot)*(wo+t*(wdot)))+sin(1/2*t*(2*wo+t*(wdot)))*(-3*(rdot)*(wdot)+r*(wo+t*(wdot)).^3);...
         -3*sin(1/2*t*(2*wo+t*(wdot)))*(wo+t*(wdot))*(r*(wdot)+(rdot)*(wo+t*(wdot)))-cos(1/2*t*(2*wo+t*(wdot)))*(-3*(rdot)*(wdot)+r*(wo+t*(wdot)).^3);...
+        -3*cos(1/2*t*(2*wo+t*(wdot)))*(wo+t*(wdot))*(r*(wdot)+(rdot)*(wo+t*(wdot)))+sin(1/2*t*(2*wo+t*(wdot)))*(-3*(rdot)*(wdot)+r*(wo+t*(wdot)).^3);...
         0; nan];
     
     waypoints(end).snap = [...
-        2*sin(1/2*t*(2*wo+t*(wdot)))*(wo+t*(wdot)).^2*(3*r*(wdot)+2*(rdot)*(wo+t*(wdot)))+cos(1/2*t*(2*wo+t*(wdot)))*(-12*(rdot)*(wdot)*(wo+t*(wdot))+r*(wo.^4+(wdot)*(4*t*wo.^3+(wdot)*(-3+6*t.^2*wo.^2+t.^3*(wdot)*(4*wo+t*(wdot))))));...
         -2*cos(1/2*t*(2*wo+t*(wdot)))*(wo+t*(wdot)).^2*(3*r*(wdot)+2*(rdot)*(wo+t*(wdot)))+sin(1/2*t*(2*wo+t*(wdot)))*(-12*(rdot)*(wdot)*(wo+t*(wdot))+r*(wo.^4+(wdot)*(4*t*wo.^3+(wdot)*(-3+6*t.^2*wo.^2+t.^3*(wdot)*(4*wo+t*(wdot))))));...
+        2*sin(1/2*t*(2*wo+t*(wdot)))*(wo+t*(wdot)).^2*(3*r*(wdot)+2*(rdot)*(wo+t*(wdot)))+cos(1/2*t*(2*wo+t*(wdot)))*(-12*(rdot)*(wdot)*(wo+t*(wdot))+r*(wo.^4+(wdot)*(4*t*wo.^3+(wdot)*(-3+6*t.^2*wo.^2+t.^3*(wdot)*(4*wo+t*(wdot))))));...
         0; nan];
 end
 
@@ -180,32 +239,36 @@ pos = waypoints(end).pos;
 
 %% Figure 8
 
-t = waypoints(end).time;
-
-t = t+1.5;
-waypoints(end+1) = NanWaypoint(t,d);
-waypoints(end).pos = [1; 1; pos(3:4)];
-waypoints(end).vel = [1; 0; 0; 0];
-
-t = t+1.5;
-waypoints(end+1) = NanWaypoint(t,d);
-waypoints(end).pos = [1; -1; pos(3:4)];
-waypoints(end).vel = [-1; 0; 0; 0];
-
-t = t+2;
-waypoints(end+1) = NanWaypoint(t,d);
-waypoints(end).pos = [-1; 1; pos(3:4)];
-waypoints(end).vel = [-1; 0; 0; 0];
-
-t = t+1.5;
-waypoints(end+1) = NanWaypoint(t,d);
-waypoints(end).pos = [-1; -1; pos(3:4)];
-waypoints(end).vel = [1; 0; 0; 0];
-
-t = t+1.5;
-waypoints(end+1) = ZeroWaypoint(t,d);
-waypoints(end).pos = pos;
-waypoints(end).vel = nan(4,1);
+% t = waypoints(end).time;
+% 
+% t = t+1.5;
+% waypoints(end+1) = NanWaypoint(t,d);
+% waypoints(end).pos = [1; 1; pos(3:4)];
+% waypoints(end).vel = [1; 0; 0; 0];
+% 
+% t = t+1.5;
+% waypoints(end+1) = NanWaypoint(t,d);
+% waypoints(end).pos = [1; -1; pos(3:4)];
+% waypoints(end).vel = [-1; 0; 0; 0];
+% 
+% t = t+2;
+% waypoints(end+1) = NanWaypoint(t,d);
+% waypoints(end).pos = [-1; 1; pos(3:4)];
+% waypoints(end).vel = [-1; 0; 0; 0];
+% 
+% t = t+1.5;
+% waypoints(end+1) = NanWaypoint(t,d);
+% waypoints(end).pos = [-1; -1; pos(3:4)];
+% waypoints(end).vel = [1; 0; 0; 0];
+% 
+% t = t+1.5;
+% waypoints(end+1) = ZeroWaypoint(t,d);
+% waypoints(end).pos = pos;
+% waypoints(end).vel = nan(4,1);
+% 
+% t = t+1.5;
+% waypoints(end+1) = ZeroWaypoint(t,d);
+% waypoints(end).pos = pos;
 
 %% Fake Falling
 
@@ -250,8 +313,6 @@ xlabel('t')
 ylabel('yaw');
 
 %PlotTraj(traj)
-
-%% Figure 8
 
 %% Falling leaf like crashing and stops right before ground
 
@@ -364,10 +425,10 @@ gains = [bsxfun(@times, multiplier, traj_kx), ...
 
 % Generate the array
 array = [...
-    ntraj(:,2,1), ntraj(:,1,1), ntraj(:,3,1), ntraj(:,4,1), ...
-    ntraj(:,2,2), ntraj(:,1,2), ntraj(:,3,2), ntraj(:,4,2), ...
-    ntraj(:,2,3), ntraj(:,1,3), ntraj(:,3,3), ntraj(:,4,3), ...
-    ntraj(:,2,4), ntraj(:,1,4), ntraj(:,3,4), ntraj(:,4,4), ...
+    ntraj(:,1,1), ntraj(:,2,1), ntraj(:,3,1), ntraj(:,4,1), ...
+    ntraj(:,1,2), ntraj(:,2,2), ntraj(:,3,2), ntraj(:,4,2), ...
+    ntraj(:,1,3), ntraj(:,2,3), ntraj(:,3,3), ntraj(:,4,3), ...
+    ntraj(:,1,4), ntraj(:,2,4), ntraj(:,3,4), ntraj(:,4,4), ...
     gains];
 filename = 'traj.csv';
 

@@ -1,7 +1,9 @@
 <launch>
 
   <arg name="model" default="QuadrotorFoxtrot"/>
-
+  <!-- arg name="device" default="/dev/ttyUSB0"/ -->
+  <arg name="device" value="/dev/tty.usbserial-FTGXFUB4"/>
+  
   <group ns="$(arg model)">
 	  
     <node pkg="nodelet"
@@ -33,8 +35,8 @@
       name="quad_serial_comm"
       args="load quad_serial_comm/QuadSerialComm standalone_nodelet_comms"
       output="screen">
-      <param name="device" value="/dev/ttyUSB0"/>
-      <!--param name="baud_rate" value="230400"/-->
+      <param name="device" value="$(arg device)"/>
+      <!-- param name="baud_rate" value="230400"/ -->
       <param name="baud_rate" value="57600"/>
       <remap from="~to_robot" to="to_robot"/>
       <remap from="~from_robot" to="from_robot"/>

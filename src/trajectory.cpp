@@ -56,6 +56,13 @@ void Trajectory::UpdateGoal(quadrotor_msgs::PositionCommand &goal)
   goal.kv[0] = traj_[i][4][3];
   goal.kv[1] = traj_[i][4][4];
   goal.kv[2] = traj_[i][4][5];
+
+  // kR_[0] = traj_[i][4][6];
+  // kR_[1] = traj_[i][4][7];
+  // kR_[2] = traj_[i][4][8];
+  // kOm_[0] = traj_[i][4][9];
+  // kOm_[1] = traj_[i][4][10];
+  // kOm_[2] = traj_[i][4][11];
 }
 
 /*

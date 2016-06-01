@@ -1,9 +1,11 @@
 <launch>
   
-  <arg name="model" default="QuadrotorFoxtrot"/>
+  <arg name="model" default="QuadrotorKilo"/>
   <arg name="sim" default="1"/>
-  <arg name="config_path" default="$(find hummingbird_demo)"/>
-  <arg name="mass" value="0.5"/>
+  <arg name="config_path" default="$(find hummingbird_demo)/config"/>
+  <arg name="mass" default="0.6"/>
+  <arg name="slow_baud_rate" default="false"/>
+  <arg name="serial_comms" default="false"/>
 
   <!-- Launch vicon odometry node -->
   <arg name="vicon_fps" value="100"/>
@@ -45,6 +47,7 @@
       <rosparam file="$(find trackers_manager)/config/trackers.yaml"/>
       <remap from="~odom" to="odom"/>
       <remap from="~cmd" to="position_cmd"/>
+      <remap from="~output_data" to="quad_decode_msg/output_data"/>
     </node>
 
     <node pkg="nodelet"
@@ -60,32 +63,29 @@
       <remap from="~so3_cmd" to="so3_cmd"/>
       <remap from="~motors" to="motors"/>
     </node>
-
-    <node pkg="mesh_visualization"
-      type="mesh_visualization"
-      name="mesh_visualization"
-      output="screen"
-      if="$(arg sim)">
-      <param name="mesh_resource" value="package://mesh_visualization/mesh/hummingbird.mesh"/>
-      <param name="color/r" value="0.0"/>
-      <param name="color/g" value="0.0"/>
-      <param name="color/b" value="1.0"/>
-      <param name="color/a" value="0.7"/>
-      <remap from="~odom" to="odom"/>
-    </node>
-
+    
+    <include file="$(find mesh_visualization)/launch/test.launch" if="$(arg sim)">
+      <!-- arg name="input" value="odom"/ -->
+      <!-- arg name="new_frame_id" value=""/ -->
+    </include>
+    
+    <!--==========================-->
     <!-- For serial communication -->
-    <node pkg="nodelet"
-      type="nodelet"
-      name="quad_serial_comm"
-      args="load quad_serial_comm/QuadSerialComm standalone_nodelet"
-      output="screen"
-      unless="$(arg sim)">
-      <param name="device" value="/dev/ttyUSB0"/>
-      <param name="baud_rate" value="57600"/>
-      <remap from="~to_robot" to="to_robot"/>
-      <remap from="~from_robot" to="from_robot"/>
-    </node>
+    <!--==========================-->
+    <group if="$(arg sim)">
+      <node pkg="nodelet"
+        type="nodelet"
+        name="quad_serial_comm"
+        args="load quad_serial_comm/QuadSerialComm standalone_nodelet"
+        output="screen"
+        if="$(arg serial_comms)">
+        <param name="device" value="/dev/ttyUSB0"/>
+        <param name="baud_rate" value="57600" if="$(arg slow_baud_rate)"/>
+        <param name="baud_rate" value="230400" unless="$(arg slow_baud_rate)"/>
+        <remap from="~to_robot" to="to_robot"/>
+        <remap from="~from_robot" to="from_robot"/>
+      </node>
+    </group>
 
     <node pkg="nodelet"
       type="nodelet"

@@ -1,0 +1,53 @@
+<launch>
+
+  <arg name="sim" default="1"/>
+  <arg name="config_path" value="$(find hummingbird_demo)/config/multi_robot"/>
+
+  <rosparam file="$(arg config_path)/params.yaml"/>
+
+  <group if="$(arg sim)">
+    <rosparam file="$(arg config_path)/sim_params.yaml"/>
+  </group>
+
+  <include file="$(find hummingbird_demo)/launch/robot.launch">
+    <arg name="model" value="QuadrotorTango"/>
+    <arg name="sim" value="$(arg sim)"/>
+    <arg name="config_path" value="$(arg config_path)"/>
+    <arg name="serial_device" value="/dev/tty.usbserial-A103VTK7"/>
+  </include>
+
+  <include file="$(find hummingbird_demo)/launch/robot.launch">
+    <arg name="model" value="QuadrotorUniform"/>
+    <arg name="sim" value="$(arg sim)"/>
+    <arg name="config_path" value="$(arg config_path)"/>
+    <arg name="serial_device" value="/dev/tty.usbserial-A103VTA4"/>
+  </include>
+
+  <include file="$(find hummingbird_demo)/launch/robot.launch">
+    <arg name="model" value="QuadrotorVictor"/>
+    <arg name="sim" value="$(arg sim)"/>
+    <arg name="config_path" value="$(arg config_path)"/>
+    <arg name="serial_device" value="/dev/tty.usbserial-A4003Sc2"/>
+  </include>
+
+  <include file="$(find hummingbird_demo)/launch/robot.launch">
+    <arg name="model" value="QuadrotorWhiskey"/>
+    <arg name="sim" value="$(arg sim)"/>
+    <arg name="config_path" value="$(arg config_path)"/>
+    <arg name="serial_device" value="/dev/tty.usbserial-A103VSLA"/>
+  </include>
+
+  <!-- include file="$(find hummingbird_demo)/launch/robot.launch">
+    <arg name="model" value="QuadrotorXray"/>
+    <arg name="sim" value="$(arg sim)"/>
+    <arg name="config_path" value="$(arg config_path)"/>
+    <arg name="serial_device" value="/dev/tty.usbserial-A4003Sc7"/>
+  </include -->
+
+  <node pkg="hummingbird_demo"
+      type="multi_mav_services"
+      name="multi_mav_services"
+      output="screen">
+  </node>
+
+</launch>

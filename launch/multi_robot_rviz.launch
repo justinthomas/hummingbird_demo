@@ -1,0 +1,6 @@
+<launch>
+  <node pkg="rviz"
+    type="rviz"
+    name="rviz"
+    args="-d $(find hummingbird_demo)/config/multi_robot/rviz_config.rviz"/>
+</launch>

@@ -20,15 +20,15 @@ angular_inertia = 2.6e-3;
 
 % Trajectory generator options
 d = 4;
-options = {'ndim',d ,'order',9, 'minderiv',[4,4,4,3], 'constraints_per_seg', 20, 'convergetol', 1e-8};
+options = {'ndim',d ,'order',13, 'minderiv',[4,4,4,3], 'constraints_per_seg', 20, 'convergetol', 1e-8};
 
 %% Moving around in a helix
 
 close all
 clear waypoints bounds
 
-z_start = 0.5;
-z_end = 1.5;
+z_start = 1.5;
+z_end = 2.5;
 r_start = 1.5;
 r_end = 0.75;
 t_start = 5;
@@ -36,7 +36,7 @@ t_end_transition = 3;
 wo = 1;
 w_end = 3;
 t_duration = 12;
-segments = 30;
+segments = 20;
 start_transition_segments = 1;
 end_transition_segments = 5;
 
