@@ -88,6 +88,7 @@ for robot = 1:length(robots)
     t = t + 1.5*dt;
     waypoints(end+1) = NanWaypoint(t, d);
     waypoints(end).pos = home + [0; 0; min(3.5 - home(3), z_start + 1); 0];
+    % It may be fun use add something like [0.75 * home(1), 0.75 * home(2), ...]
     
     % Negative z to Base
     t = t + 1.5*dt;

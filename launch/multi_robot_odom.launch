@@ -6,21 +6,25 @@
   <include file="$(find vicon_odom)/launch/vicon_odom.launch">
     <arg name="model" value="QuadrotorTango" />
     <arg name="vicon_fps" value="$(arg vicon_fps)"/>
+    <arg name="publish_tf" value="true"/>
   </include>
 
   <include file="$(find vicon_odom)/launch/vicon_odom.launch">
     <arg name="model" value="QuadrotorUniform" />
     <arg name="vicon_fps" value="$(arg vicon_fps)"/>
+    <arg name="publish_tf" value="true"/>
   </include>
 
   <include file="$(find vicon_odom)/launch/vicon_odom.launch">
     <arg name="model" value="QuadrotorVictor" />
     <arg name="vicon_fps" value="$(arg vicon_fps)"/>
+    <arg name="publish_tf" value="true"/>
   </include>
 
   <include file="$(find vicon_odom)/launch/vicon_odom.launch">
     <arg name="model" value="QuadrotorWhiskey" />
     <arg name="vicon_fps" value="$(arg vicon_fps)"/>
+    <arg name="publish_tf" value="true"/>
   </include>
 
   <!-- include file="$(find vicon_odom)/launch/vicon_odom.launch">

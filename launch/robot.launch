@@ -47,6 +47,14 @@
       <arg name="model" value="$(arg model)"/>
     </include>
 
+    <node pkg="mesh_visualization"
+      type="mesh_visualization"
+      name="mesh_visualization"
+      output="screen">
+      <param name="mesh_resource" value="package://mesh_visualization/mesh/hummingbird.mesh"/>
+      <remap from="~odom" to="odom"/>
+    </node>
+
     <include file="$(find hummingbird_demo)/launch/robot_comms.launch" unless="$(arg sim)">
       <arg name="device" value="$(arg serial_device)"/>
       <arg name="baud_rate" value="57600"/>

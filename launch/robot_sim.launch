@@ -13,12 +13,4 @@
     <param name="quadrotor_name" value="$(arg model)"/>
   </node>
 
-  <node pkg="mesh_visualization"
-    type="mesh_visualization"
-    name="mesh_visualization"
-    output="screen">
-    <param name="mesh_resource" value="package://mesh_visualization/mesh/hummingbird.mesh"/>
-    <remap from="~odom" to="odom"/>
-  </node>
-
 </launch>

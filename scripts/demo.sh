@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# Don't forget to source the setup.bash file
+#
+# In OSX:
+# roscore
+#
+# In Ubuntu:
+# roslaunch hummingbird_demo multi_robot_odom.launch
+#
+# In OSX:
+# roslaunch hummingbird_demo multi_robot.launch sim:=0
+# cd ~/catkin_ws/src/hummingbird_demo/scripts/
+# ./demo.sh
+
 echo "Loading Trajectory"
 rosservice call /multi_mav_services/loadTraj
 
