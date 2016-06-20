@@ -52,7 +52,7 @@
       name="mesh_visualization"
       output="screen">
       <param name="mesh_resource" value="package://mesh_visualization/mesh/hummingbird.mesh"/>
-      <remap from="~odom" to="odom"/>
+      <remap from="~input" to="odom"/>
     </node>
 
     <include file="$(find hummingbird_demo)/launch/robot_comms.launch" unless="$(arg sim)">
